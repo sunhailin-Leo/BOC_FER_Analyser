@@ -155,9 +155,9 @@ def build_statsmodels_model(
     diff1 = diff1.dropna()
     fig = plt.figure(figsize=(12, 8))
     ax1 = fig.add_subplot(211)
-    fig = sm.graphics.tsa.plot_acf(diff1, lags=40, ax=ax1)
+    fig = sm.graphics.tsa.plot_acf(diff1, lags=lag_num, ax=ax1)
     ax2 = fig.add_subplot(212)
-    fig = sm.graphics.tsa.plot_pacf(diff1, lags=40, ax=ax2)
+    fig = sm.graphics.tsa.plot_pacf(diff1, lags=lag_num, ax=ax2)
     fig.show()
     try:
         fig.savefig('./picture/acf_pacf.jpg')
@@ -174,7 +174,7 @@ def build_statsmodels_model(
     resid = arma_mod.resid
     fig = plt.figure(figsize=(12, 8))
     ax1 = fig.add_subplot(211)
-    fig = sm.graphics.tsa.plot_acf(resid.values.squeeze(), lags=40, ax=ax1)
+    fig = sm.graphics.tsa.plot_acf(resid.values.squeeze(), lags=lag_num, ax=ax1)
     ax2 = fig.add_subplot(212)
     fig = sm.graphics.tsa.plot_pacf(resid, lags=lag_num, ax=ax2)
     fig.show()
@@ -200,7 +200,7 @@ def build_statsmodels_model(
 
     # 残差序列Ljung-Box检验，也叫Q检验
     r, q, p = sm.tsa.acf(resid.values.squeeze(), qstat=True)
-    data = np.c_[range(1, 41), r[1:], q, p]
+    data = np.c_[range(1, lag_num + 1), r[1:], q, p]
     table = pd.DataFrame(data, columns=['lag', "AC", "Q", "Prob(>Q)"])
     temp_df = table.set_index('lag')
     print(temp_df)
@@ -302,7 +302,7 @@ def build_model(df: pd.DataFrame, model_class_name: str = 'statsmodels'):
 
 def main_process():
     # 加载数据
-    data = DataLoader(password='123456')
+    data = DataLoader()
     data_frame = get_dataframe(data_conn=data)
 
     # 数据自定义过滤清洗
